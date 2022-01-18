@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PrettyShelf</string>
+    <string name="isbn">ISBN</string>
+    <string name="search">Search</string>
+</resources>
