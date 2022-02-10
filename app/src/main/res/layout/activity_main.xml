@@ -2,32 +2,75 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="20dp"
         tools:context=".MainActivity">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/search_button"
+            android:hint="@string/isbn"
+            android:importantForAutofill="no"
+            android:inputType="number" />
 
-            <EditText
-                android:id="@+id/search_bar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/isbn"
-                android:importantForAutofill="no"
-                android:inputType="number" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/search" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/search_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/search" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/book_title_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/search_bar"
+            android:layout_alignParentStart="true"
+            android:layout_marginVertical="15dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:text="@string/book_title" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/search_bar"
+            android:layout_alignParentEnd="true"
+            android:layout_marginVertical="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/book_title_header"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="title" />
+
+        <TextView
+            android:id="@+id/category_title_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/book_title_header"
+            android:layout_alignParentStart="true"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:text="@string/category" />
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/book_title"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/category_title_header"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="category" />
+
+    </RelativeLayout>
 </layout>

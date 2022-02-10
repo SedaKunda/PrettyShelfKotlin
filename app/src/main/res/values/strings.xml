@@ -2,4 +2,6 @@
     <string name="app_name">PrettyShelf</string>
     <string name="isbn">ISBN</string>
     <string name="search">Search</string>
+    <string name="book_title">Book Title:</string>
+    <string name="category">Category:</string>
 </resources>
