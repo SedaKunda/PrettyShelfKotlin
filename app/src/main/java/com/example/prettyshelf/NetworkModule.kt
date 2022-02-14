@@ -1,12 +1,21 @@
 package com.example.prettyshelf
 
+import dagger.Component
+import dagger.Module
+import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
+import javax.inject.Singleton
 
+@Module
 class NetworkModule {
+    private val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
 
-    private fun provideApiRemoteRetrofit(
+    @Provides
+    fun provideApiRemoteRetrofit(
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder()
@@ -16,19 +25,20 @@ class NetworkModule {
             .build()
     }
 
-    private fun getHttpClient(): OkHttpClient {
+    @Provides
+    fun provideHttpClient(): OkHttpClient {
         val okHttpBuilder = OkHttpClient.Builder()
         okHttpBuilder.addInterceptor { chain ->
             val requestWithUserAgent = chain.request().newBuilder()
-                .header("User-Agent", "My custom user agent")
+                .header("Date", date)
                 .build()
             chain.proceed(requestWithUserAgent)
         }
         return okHttpBuilder.build()
     }
 
-    fun makeRetrofitService(): OpenLibraryApi {
-
-        return provideApiRemoteRetrofit(getHttpClient()).create(OpenLibraryApi::class.java)
+    @Provides
+    fun provideOpenAPIService(): OpenLibraryApi {
+        return provideApiRemoteRetrofit(provideHttpClient()).create(OpenLibraryApi::class.java)
     }
 }
