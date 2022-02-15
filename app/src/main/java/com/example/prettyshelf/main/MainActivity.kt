@@ -1,8 +1,9 @@
-package com.example.prettyshelf
+package com.example.prettyshelf.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.example.prettyshelf.PrettyShelfApplication
 import com.example.prettyshelf.databinding.ActivityMainBinding
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModelListeners() {
-        mainViewModel.isbnSearchResult.observe(this) { result ->
+        mainViewModel.isbnResultLiveData.observe(this) { result ->
             binding.bookTitle.text = result.isbnResponse.title
             binding.category.text = result.isbnResponse.subjects?.toList().toString()
 
@@ -41,8 +42,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    //isbn: 9781942788973
 
     private fun showBookView() {
         with(binding) {

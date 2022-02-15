@@ -1,6 +1,7 @@
-package com.example.prettyshelf
+package com.example.prettyshelf.networking
 
-import dagger.Component
+import com.example.prettyshelf.BuildConfig
+import com.example.prettyshelf.data.OpenLibraryApi
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -8,7 +9,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.inject.Singleton
 
 @Module
 class NetworkModule {
