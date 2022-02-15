@@ -36,6 +36,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 def retrofit_version = "2.9.0"
@@ -73,4 +77,5 @@ dependencies {
 
     //Testing
     testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 }
