@@ -29,6 +29,7 @@ class MainActivityCompose : ComponentActivity() {
 
     private lateinit var response: ISBNResponse
     private lateinit var shouldShowResponse: MutableState<Boolean>
+    private lateinit var isLoading: MutableState<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +52,7 @@ class MainActivityCompose : ComponentActivity() {
     @Composable
     private fun ISBNSearchScreen() {
         shouldShowResponse = remember { mutableStateOf(false) }
+        isLoading = remember { mutableStateOf(false) }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
@@ -61,8 +63,13 @@ class MainActivityCompose : ComponentActivity() {
                     .fillMaxSize()
                     .padding(12.dp)
             ) {
-                AddForm(onSearchPressed = { isbn -> mainViewModel.getBookTitleAndCategory(isbn) })
+                AddForm(onSearchPressed = { isbn ->
+                    mainViewModel.getBookTitleAndCategory(isbn)
+                    isLoading.value = true
+                })
+                Spacer(modifier = Modifier.size(4.dp))
                 AddFormResponse(shouldShowResponse)
+                LoadingScreen(isLoading = isLoading) {}
             }
         }
     }
@@ -75,21 +82,21 @@ class MainActivityCompose : ComponentActivity() {
         responseAsState.value?.let {
             shouldShowResponse.value = it.showResponse
             response = it.isbnResponse
+            isLoading.value = false
         }
     }
 
     @Composable
     fun LoadingScreen(
-        isLoading: Boolean,
+        isLoading: MutableState<Boolean>,
         content: @Composable () -> Unit
-    ) = if (isLoading
-    ) {
+    ) = if (isLoading.value) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Loading")
+                Text(text = "Searching...")
                 CircularProgressIndicator()
             }
         }
@@ -156,8 +163,8 @@ fun DefaultPreview() {
         Column {
             AddForm(onSearchPressed = { })
             Spacer(modifier = Modifier.size(4.dp))
-            Column {
-                Text("test")
+            MainActivityCompose().LoadingScreen(isLoading = mutableStateOf(true)) {
+
             }
         }
     }
