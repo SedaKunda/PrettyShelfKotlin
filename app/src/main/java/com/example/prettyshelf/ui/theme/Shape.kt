@@ -1,4 +1,4 @@
-package com.example.prettyshelf.main.ui.theme
+package com.example.prettyshelf.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

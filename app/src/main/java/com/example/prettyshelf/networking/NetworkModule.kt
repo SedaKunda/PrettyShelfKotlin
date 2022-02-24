@@ -1,7 +1,6 @@
 package com.example.prettyshelf.networking
 
 import com.example.prettyshelf.BuildConfig
-import com.example.prettyshelf.data.OpenLibraryApi
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

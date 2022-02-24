@@ -1,4 +1,4 @@
-package com.example.prettyshelf.main
+package com.example.prettyshelf.ui.screens.search
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,15 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.prettyshelf.ISBNResponse
 import com.example.prettyshelf.di.DaggerApplicationComponent
-import com.example.prettyshelf.main.ui.theme.PrettyShelfTheme
+import com.example.prettyshelf.domain.ISBNResponse
+import com.example.prettyshelf.ui.theme.PrettyShelfTheme
 import javax.inject.Inject
 
-class MainActivityCompose : ComponentActivity() {
+class ISBNSearchComposeActivity : ComponentActivity() {
 
     @Inject
-    lateinit var mainViewModel: MainViewModel
+    lateinit var isbnSearchViewModel: ISBNSearchViewModel
 
     private lateinit var response: ISBNResponse
     private lateinit var shouldShowResponse: MutableState<Boolean>
@@ -35,7 +35,7 @@ class MainActivityCompose : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InitViewModel()
-            SetUpObservers(mainViewModel)
+            SetUpObservers(isbnSearchViewModel)
             PrettyShelfTheme {
                 ISBNSearchScreen()
             }
@@ -44,7 +44,7 @@ class MainActivityCompose : ComponentActivity() {
 
     @Composable
     private fun InitViewModel() {
-        mainViewModel = assistedViewModel {
+        isbnSearchViewModel = assistedViewModel {
             DaggerApplicationComponent.builder().build().getViewModel() //todo refactor
         }
     }
@@ -64,7 +64,7 @@ class MainActivityCompose : ComponentActivity() {
                     .padding(12.dp)
             ) {
                 AddForm(onSearchPressed = { isbn ->
-                    mainViewModel.getBookTitleAndCategory(isbn)
+                    isbnSearchViewModel.getBookTitleAndCategory(isbn)
                     isLoading.value = true
                 })
                 Spacer(modifier = Modifier.size(4.dp))
@@ -76,7 +76,7 @@ class MainActivityCompose : ComponentActivity() {
 
     @Composable
     fun SetUpObservers(
-        viewModel: MainViewModel = viewModel()
+        viewModel: ISBNSearchViewModel = viewModel()
     ) {
         val responseAsState = viewModel.isbnResultLiveData.observeAsState()
         responseAsState.value?.let {
@@ -108,10 +108,10 @@ class MainActivityCompose : ComponentActivity() {
     @Composable
     inline fun assistedViewModel(
         key: String? = null,
-        crossinline viewModelInstanceCreator: () -> MainViewModel
-    ): MainViewModel =
+        crossinline viewModelInstanceCreator: () -> ISBNSearchViewModel
+    ): ISBNSearchViewModel =
         viewModel(
-            modelClass = MainViewModel::class.java,
+            modelClass = ISBNSearchViewModel::class.java,
             key = key,
             factory = object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -163,7 +163,7 @@ fun DefaultPreview() {
         Column {
             AddForm(onSearchPressed = { })
             Spacer(modifier = Modifier.size(4.dp))
-            MainActivityCompose().LoadingScreen(isLoading = mutableStateOf(true)) {
+            ISBNSearchComposeActivity().LoadingScreen(isLoading = mutableStateOf(true)) {
 
             }
         }

@@ -1,4 +1,4 @@
-package com.example.prettyshelf.main
+package com.example.prettyshelf.ui.screens.search
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,11 +7,11 @@ import com.example.prettyshelf.PrettyShelfApplication
 import com.example.prettyshelf.databinding.ActivityMainBinding
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class ISBNSearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     @Inject
-    lateinit var mainViewModel: MainViewModel
+    lateinit var isbnSearchViewModel: ISBNSearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (applicationContext as PrettyShelfApplication).appComponent.inject(this)
@@ -27,13 +27,13 @@ class MainActivity : AppCompatActivity() {
         with(binding) {
             searchButton.setOnClickListener {
                 val input = searchBar.text.toString()
-                mainViewModel.getBookTitleAndCategory(input)
+                isbnSearchViewModel.getBookTitleAndCategory(input)
             }
         }
     }
 
     private fun setupViewModelListeners() {
-        mainViewModel.isbnResultLiveData.observe(this) { result ->
+        isbnSearchViewModel.isbnResultLiveData.observe(this) { result ->
             binding.bookTitle.text = result.isbnResponse.title
             binding.category.text = result.isbnResponse.subjects?.toList().toString()
 

@@ -1,4 +1,4 @@
-package com.example.prettyshelf
+package com.example.prettyshelf.domain
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

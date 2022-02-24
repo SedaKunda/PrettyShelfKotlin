@@ -1,6 +1,6 @@
-package com.example.prettyshelf.data
+package com.example.prettyshelf.networking
 
-import com.example.prettyshelf.ISBNResponse
+import com.example.prettyshelf.domain.ISBNResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
