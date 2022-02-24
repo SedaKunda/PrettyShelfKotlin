@@ -12,5 +12,5 @@ import javax.inject.Singleton
 interface ApplicationComponent {
     fun inject(activity: ISBNSearchActivity)
     fun inject(activity: ISBNSearchComposeActivity)
-    fun getViewModel(): ISBNSearchViewModel
+    fun getISBNViewModel(): ISBNSearchViewModel //refactor todo move to vm module
 }

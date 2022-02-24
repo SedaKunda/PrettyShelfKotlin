@@ -20,10 +20,10 @@ class ISBNSearchViewModel @Inject constructor(private val openLibraryApi: OpenLi
             val response = openLibraryApi.fetchISBN("$isbn.json")
             isbnResultLiveData.postValue(
                 Response(
-                isbnResponse = response,
-                showResponse = true
-            )
-            )
+                    isbnResponse = response,
+                    showResponse = true
+                )
+            )//todo handle error
         }
     }
 

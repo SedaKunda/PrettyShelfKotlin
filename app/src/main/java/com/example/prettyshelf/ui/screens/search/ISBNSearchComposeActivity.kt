@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.prettyshelf.di.DaggerApplicationComponent
+import com.example.prettyshelf.appComponent
 import com.example.prettyshelf.domain.ISBNResponse
+import com.example.prettyshelf.ui.screens.shared.LoadingIndicator
+import com.example.prettyshelf.ui.screens.shared.assistedViewModel
 import com.example.prettyshelf.ui.theme.PrettyShelfTheme
 import javax.inject.Inject
 
@@ -33,6 +33,7 @@ class ISBNSearchComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appComponent.inject(this)
         setContent {
             InitViewModel()
             SetUpObservers(isbnSearchViewModel)
@@ -44,8 +45,18 @@ class ISBNSearchComposeActivity : ComponentActivity() {
 
     @Composable
     private fun InitViewModel() {
-        isbnSearchViewModel = assistedViewModel {
-            DaggerApplicationComponent.builder().build().getViewModel() //todo refactor
+        isbnSearchViewModel = assistedViewModel { appComponent.getISBNViewModel() }
+    }
+
+    @Composable
+    fun SetUpObservers(
+        viewModel: ISBNSearchViewModel = viewModel()
+    ) {
+        val responseAsState = viewModel.isbnResultLiveData.observeAsState()
+        responseAsState.value?.let {
+            shouldShowResponse.value = it.showResponse
+            response = it.isbnResponse
+            isLoading.value = false
         }
     }
 
@@ -69,57 +80,33 @@ class ISBNSearchComposeActivity : ComponentActivity() {
                 })
                 Spacer(modifier = Modifier.size(4.dp))
                 AddFormResponse(shouldShowResponse)
-                LoadingScreen(isLoading = isLoading) {}
+                LoadingIndicator(isLoading = isLoading) {}
             }
         }
     }
 
     @Composable
-    fun SetUpObservers(
-        viewModel: ISBNSearchViewModel = viewModel()
+    fun AddForm(
+        onSearchPressed: (String) -> Unit
     ) {
-        val responseAsState = viewModel.isbnResultLiveData.observeAsState()
-        responseAsState.value?.let {
-            shouldShowResponse.value = it.showResponse
-            response = it.isbnResponse
-            isLoading.value = false
-        }
-    }
-
-    @Composable
-    fun LoadingScreen(
-        isLoading: MutableState<Boolean>,
-        content: @Composable () -> Unit
-    ) = if (isLoading.value) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Searching...")
-                CircularProgressIndicator()
-            }
-        }
-    } else {
-        content()
-    }
-
-    //todo refactor
-    @Composable
-    inline fun assistedViewModel(
-        key: String? = null,
-        crossinline viewModelInstanceCreator: () -> ISBNSearchViewModel
-    ): ISBNSearchViewModel =
-        viewModel(
-            modelClass = ISBNSearchViewModel::class.java,
-            key = key,
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return viewModelInstanceCreator() as T
+        Column {
+            Row {
+                val isbnText = remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = isbnText.value,
+                    label = { Text("ISBN") },
+                    onValueChange = { isbnText.value = it }
+                )
+                Spacer(modifier = Modifier.size(4.dp))
+                Button(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    onClick = { onSearchPressed(isbnText.value) }) {
+                    Text(text = "Search")
                 }
             }
-        )
+            Spacer(modifier = Modifier.size(4.dp))
+        }
+    }
 
     @Composable
     fun AddFormResponse(shouldShowResponse: MutableState<Boolean>) {
@@ -133,37 +120,14 @@ class ISBNSearchComposeActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun AddForm(
-    onSearchPressed: (String) -> Unit
-) {
-    Column() {
-        Row {
-            val isbnText = remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = isbnText.value,
-                label = { Text("ISBN") },
-                onValueChange = { isbnText.value = it }
-            )
-            Spacer(modifier = Modifier.size(4.dp))
-            Button(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                onClick = { onSearchPressed(isbnText.value) }) {
-                Text(text = "Search")
-            }
-        }
-        Spacer(modifier = Modifier.size(4.dp))
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     PrettyShelfTheme {
         Column {
-            AddForm(onSearchPressed = { })
+            ISBNSearchComposeActivity().AddForm(onSearchPressed = { })
             Spacer(modifier = Modifier.size(4.dp))
-            ISBNSearchComposeActivity().LoadingScreen(isLoading = mutableStateOf(true)) {
+            LoadingIndicator(isLoading = mutableStateOf(true)) {
 
             }
         }
