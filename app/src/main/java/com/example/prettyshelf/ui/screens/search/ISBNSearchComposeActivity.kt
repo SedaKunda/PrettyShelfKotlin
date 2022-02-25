@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prettyshelf.appComponent
 import com.example.prettyshelf.domain.ISBNResponse
+import com.example.prettyshelf.ui.screens.shared.ErrorIndicator
+import com.example.prettyshelf.ui.screens.shared.ErrorState
 import com.example.prettyshelf.ui.screens.shared.LoadingIndicator
 import com.example.prettyshelf.ui.screens.shared.assistedViewModel
 import com.example.prettyshelf.ui.theme.PrettyShelfTheme
@@ -30,6 +32,8 @@ class ISBNSearchComposeActivity : ComponentActivity() {
     private lateinit var response: ISBNResponse
     private lateinit var shouldShowResponse: MutableState<Boolean>
     private lateinit var isLoading: MutableState<Boolean>
+    private lateinit var isInErrorState: MutableState<Boolean>
+    private lateinit var errorType: MutableState<ErrorState>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +56,17 @@ class ISBNSearchComposeActivity : ComponentActivity() {
     fun SetUpObservers(
         viewModel: ISBNSearchViewModel = viewModel()
     ) {
-        val responseAsState = viewModel.isbnResultLiveData.observeAsState()
+        val responseAsState =
+            viewModel.isbnResultLiveData.observeAsState() //todo always loading on second error
         responseAsState.value?.let {
             shouldShowResponse.value = it.showResponse
-            response = it.isbnResponse
+            if (it.isbnResponse != null) {
+                response = it.isbnResponse
+            }
+            if (it.errorState != null) {
+                errorType.value = it.errorState
+                isInErrorState.value = true
+            }
             isLoading.value = false
         }
     }
@@ -64,6 +75,8 @@ class ISBNSearchComposeActivity : ComponentActivity() {
     private fun ISBNSearchScreen() {
         shouldShowResponse = remember { mutableStateOf(false) }
         isLoading = remember { mutableStateOf(false) }
+        isInErrorState = remember { mutableStateOf(false) }
+        errorType = remember { mutableStateOf(ErrorState.UNKNOWN) }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
@@ -80,7 +93,8 @@ class ISBNSearchComposeActivity : ComponentActivity() {
                 })
                 Spacer(modifier = Modifier.size(4.dp))
                 AddFormResponse(shouldShowResponse)
-                LoadingIndicator(isLoading = isLoading) {}
+                LoadingIndicator(isLoading) {}
+                ErrorIndicator(isInErrorState, errorType)
             }
         }
     }

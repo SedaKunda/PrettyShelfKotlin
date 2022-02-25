@@ -27,3 +27,27 @@ fun LoadingIndicator(
 } else {
     content()
 }
+
+@Composable
+fun ErrorIndicator(
+    hasError: MutableState<Boolean>,
+    errorType: MutableState<ErrorState>
+) {
+    if (hasError.value) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "There's been a problem")
+                when (errorType.value) {
+                    ErrorState.NOT_FOUND -> Text(text = "It was not found")
+                    ErrorState.BAD_REQUEST -> Text(text = "something")
+                    ErrorState.INTERNAL_SERVER_ERROR -> Text(text = "something else")
+                    ErrorState.FORBIDDEN -> Text(text = "oh no")
+                    ErrorState.UNKNOWN -> Text(text = "oh no no no no no")
+                }
+            }
+        }
+    }
+}

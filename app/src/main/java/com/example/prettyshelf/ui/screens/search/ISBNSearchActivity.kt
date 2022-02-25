@@ -34,12 +34,14 @@ class ISBNSearchActivity : AppCompatActivity() {
 
     private fun setupViewModelListeners() {
         isbnSearchViewModel.isbnResultLiveData.observe(this) { result ->
-            binding.bookTitle.text = result.isbnResponse.title
-            binding.category.text = result.isbnResponse.subjects?.toList().toString()
+            if (result.isbnResponse != null) {
+                binding.bookTitle.text = result.isbnResponse.title
+                binding.category.text = result.isbnResponse.subjects?.toList().toString()
 
-            if (result.showResponse) {
-                showBookView()
-            }
+                if (result.showResponse) {
+                    showBookView()
+                }
+            } //todo else error screen
         }
     }
 
